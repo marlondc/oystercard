@@ -37,28 +37,35 @@ describe Oystercard do
 
     it "deducts fare amount from balance" do
       oystercard.top_up(20)
-      expect{ oystercard.deduct(3) }.to change{ oystercard.balance }.by(-3) 
+      expect{ oystercard.deduct(3) }.to change{ oystercard.balance }.by(-3)
     end
 
   end
 
-  describe "#touch_in" do 
+  describe "#touch_in" do
 
     it { is_expected.to respond_to(:touch_in)}
 
     it "can touch in" do
+      oystercard.top_up(Oystercard::MINIMUM_BALANCE)
       oystercard.touch_in
       expect(oystercard.travelling).to be(true)
+    end
+
+    it "refuse entry if balance < minimum amount" do
+      minimum_balance = Oystercard::MINIMUM_BALANCE
+      expect{ oystercard.touch_in }.to raise_error("Balance less than #{minimum_balance}")
     end
   end
 
   describe "#touch_out" do
-    
+
     it "can touch out" do
+      oystercard.top_up(Oystercard::MINIMUM_BALANCE)
       oystercard.touch_in
       oystercard.touch_out
       expect(oystercard.travelling).to be(false)
-    end 
+    end
 
   end
 
