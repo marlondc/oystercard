@@ -12,6 +12,10 @@ describe Oystercard do
     expect(oystercard.balance).to eq(0)
   end
 
+  it "is initially not in a journey" do
+    expect(oystercard.travelling).to be(false)
+  end
+
   describe "#top_up" do
 
     it { is_expected.to respond_to(:top_up).with(1).argument }
@@ -35,6 +39,26 @@ describe Oystercard do
       oystercard.top_up(20)
       expect{ oystercard.deduct(3) }.to change{ oystercard.balance }.by(-3) 
     end
+
+  end
+
+  describe "#touch_in" do 
+
+    it { is_expected.to respond_to(:touch_in)}
+
+    it "can touch in" do
+      oystercard.touch_in
+      expect(oystercard.travelling).to be(true)
+    end
+  end
+
+  describe "#touch_out" do
+    
+    it "can touch out" do
+      oystercard.touch_in
+      oystercard.touch_out
+      expect(oystercard.travelling).to be(false)
+    end 
 
   end
 
