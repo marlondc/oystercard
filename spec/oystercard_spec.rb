@@ -19,6 +19,10 @@ describe Oystercard do
     end
   end
 
+  describe '#pay' do
+  	it { is_expected.to respond_to(:pay).with(1).argument }
+  end
+
 end
 
 
