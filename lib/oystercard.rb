@@ -1,5 +1,5 @@
 class Oystercard
-  
+
   MAXIMUM_BALANCE = 90
 
   attr_reader :balance
@@ -13,6 +13,9 @@ class Oystercard
     @balance += amount
   end
 
+  def deduct(fare)
+    @balance -= fare
+  end
 
 
 end
