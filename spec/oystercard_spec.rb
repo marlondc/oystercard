@@ -2,7 +2,9 @@ require 'oystercard'
 
 describe Oystercard do
 
-let(:station) {double :station}
+  let(:station) {double :station}
+  let(:other_station) {double :station}
+
 
   it 'has a balance of zero' do
     expect(subject.balance).to eq 0
@@ -10,6 +12,9 @@ let(:station) {double :station}
 
   it 'is initially not in a journey' do
     expect(subject).not_to be_in_journey
+  end
+  it 'is initially has no journey history' do
+    expect(subject.journey_history).to be_empty
   end
 
   describe '#top_up' do
@@ -25,34 +30,25 @@ let(:station) {double :station}
     end
   end
 
-  # describe '#deduct' do
-
-  #   it 'can deduct from the balance' do
-  #     subject.top_up(20)
-  #     expect{ subject.deduct 4}.to change{ subject.balance }.by -4
-  #   end
-  # end
-
   describe '#touch_in' do
 
     context 'when balance is zero' do
-     it 'can\'t touch-in with 0 balance' do
-      expect{subject.touch_in(station)}.to raise_error('Please top up')
-      # expect(subject).to be_in_journey
-    end
+      it 'can\'t touch-in with 0 balance' do
+        expect{subject.touch_in(station)}.to raise_error('Please top up')
+      end
     end
     context 'when balance is above minimum' do
-      before(:each) do 
+      before(:each) do
         subject.top_up(5)
       end
-    it 'can touch-in' do
-      expect(subject.touch_in(station)).to be_in_journey
-    end
+      it 'can touch-in' do
+        expect(subject.touch_in(station)).to be_in_journey
+      end
 
-    it 'knows where it touched-in' do
-      subject.touch_in(station)
-      expect(subject.entry_station).to eq station 
-    end
+      it 'knows where it touched-in' do
+        subject.touch_in(station)
+        expect(subject.entry_station).to eq station
+      end
     end
 
   end
@@ -60,15 +56,24 @@ let(:station) {double :station}
   describe '#touch_out' do
 
     it 'can touch-out' do
-      subject.touch_out
+      subject.touch_out(other_station)
       expect(subject).not_to be_in_journey
     end
 
     it 'deducts on touch-out' do
-      expect {subject.touch_out}.to change{subject.balance}.by -Oystercard::MINIMUM_FARE
+      expect {subject.touch_out(other_station)}.to change{subject.balance}.by -Oystercard::MINIMUM_FARE
     end
   end
 
+
+  describe '#journey_history' do
+    it 'makes a journey' do
+      subject.top_up 2
+      subject.touch_in(other_station)
+      subject.touch_out(station)
+      expect(subject.journey_history).to include(other_station => station)
+    end
+  end
 end
 
 
