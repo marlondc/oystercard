@@ -33,8 +33,13 @@ describe Oystercard do
   describe '#touch_in' do
 
     it 'can touch-in' do
+      subject.top_up 1
       subject.touch_in
       expect(subject).to be_in_journey
+    end
+    it 'can\'t touch-in with 0 balance' do
+      expect{subject.touch_in}.to raise_error('Please top up')
+      # expect(subject).to be_in_journey
     end
 
   end
