@@ -9,7 +9,7 @@ p "New card. show balance: #{oc.balance}"
 p "top up #{oc.top_up 10}"
 p "in journey #{oc.in_journey?}"
 p "touch in"
-oc.touch_in # error here
+oc.touch_in(:station) # error here
 p oc.balance
 p "touch out "
 oc.touch_out # 
