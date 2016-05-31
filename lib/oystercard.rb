@@ -18,6 +18,7 @@ class Oystercard
   def touch_in
     fail "Balance less than #{MINIMUM_FARE}" if @balance < MINIMUM_FARE
   	@travelling = true
+  	self
   end
 
   def touch_out
