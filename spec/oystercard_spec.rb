@@ -80,13 +80,13 @@ describe Oystercard do
 
   describe "#journey_history" do
     it "starts with an empty journey history" do
-      expect(oystercard.journey_history.length).to eq 0
+      expect(oystercard.journey_history.length).to eq(0)
     end
      it "loads journey history" do
       oystercard.top_up(minimum_fare)
       oystercard.touch_in(station)
       oystercard.touch_out(station)
-      expect(oystercard.journey_history.length).to eq 1
+      expect(oystercard.journey_history.length).to eq(1)
      end
   end
 end
