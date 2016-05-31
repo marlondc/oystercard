@@ -66,16 +66,27 @@ describe Oystercard do
     it "can touch out" do
       oystercard.top_up(minimum_fare)
       oystercard.touch_in(station)
-      oystercard.touch_out
+      oystercard.touch_out(station)
       expect(oystercard.in_journey?).to be(false)
     end
 
     it "deducts minimum fare" do
       oystercard.top_up(minimum_fare)
       oystercard.touch_in(station)
-      expect{ oystercard.touch_out }.to change{ oystercard.balance }.by(-minimum_fare) 
+      expect{ oystercard.touch_out(station) }.to change{ oystercard.balance }.by(-minimum_fare) 
     end
 
   end
 
+  describe "#journey_history" do
+    it "starts with an empty journey history" do
+      expect(oystercard.journey_history.length).to eq 0
+    end
+     it "loads journey history" do
+      oystercard.top_up(minimum_fare)
+      oystercard.touch_in(station)
+      oystercard.touch_out(station)
+      expect(oystercard.journey_history.length).to eq 1
+     end
+  end
 end
