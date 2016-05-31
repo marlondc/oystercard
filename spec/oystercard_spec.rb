@@ -22,13 +22,13 @@ describe Oystercard do
     end
   end
 
-  describe '#deduct' do
+  # describe '#deduct' do
 
-    it 'can deduct from the balance' do
-      subject.top_up(20)
-      expect{ subject.deduct 4}.to change{ subject.balance }.by -4
-    end
-  end
+  #   it 'can deduct from the balance' do
+  #     subject.top_up(20)
+  #     expect{ subject.deduct 4}.to change{ subject.balance }.by -4
+  #   end
+  # end
 
   describe '#touch_in' do
 
@@ -46,9 +46,13 @@ describe Oystercard do
 
   describe '#touch_out' do
 
-    it 'can touch-in' do
+    it 'can touch-out' do
       subject.touch_out
       expect(subject).not_to be_in_journey
+    end
+
+    it 'deducts on touch-out' do
+      expect {subject.touch_out}.to change{subject.balance}.by -Oystercard::MINIMUM_FARE
     end
   end
 
