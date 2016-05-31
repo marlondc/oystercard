@@ -2,9 +2,10 @@ require 'oystercard'
 
 describe Oystercard do
 
-  let (:oystercard) { Oystercard.new }
+  subject(:oystercard) { described_class.new }
   let (:maximum_balance) { Oystercard::MAXIMUM_BALANCE }
   let (:minimum_fare) { Oystercard::MINIMUM_FARE }
+  let (:station) { double :station }
 
   it "creates new OysterCard" do
     expect(oystercard).to be_a (Oystercard)
@@ -15,7 +16,7 @@ describe Oystercard do
   end
 
   it "is initially not in a journey" do
-    expect(oystercard.travelling).to be(false)
+    expect(oystercard.in_journey?).to be(false)
   end
 
   describe "#top_up" do
@@ -28,7 +29,7 @@ describe Oystercard do
 
     it "raises error if top up will exceed maximum balance" do
       oystercard.top_up(maximum_balance)
-      expect{ oystercard.top_up(1) }.to raise_error("Balance cannot exceed #{maximum_balance}")
+      expect{ oystercard.top_up(minimum_fare) }.to raise_error("Balance cannot exceed #{maximum_balance}")
     end
 
   end
@@ -39,27 +40,39 @@ describe Oystercard do
 
     it "can touch in" do
       oystercard.top_up(minimum_fare)
-      oystercard.touch_in
-      expect(oystercard.travelling).to be(true)
+      oystercard.touch_in(station)
     end
 
     it "refuse entry if balance < minimum fare" do
-      expect{ oystercard.touch_in }.to raise_error("Balance less than #{minimum_fare}")
+      expect{ oystercard.touch_in(station) }.to raise_error("Balance less than #{minimum_fare}")
     end
+
+    it "remembers the entry station" do 
+    	oystercard.top_up(minimum_fare)
+    	oystercard.touch_in(station)
+    	expect(oystercard.entry_station).to eq(station)
+    end
+
+    it "refuses entry if already in journey" do
+    	oystercard.top_up(minimum_fare)
+    	oystercard.touch_in(station)
+    	expect{ oystercard.touch_in(station) }.to raise_error("Already touched in")
+    end
+
   end
 
   describe "#touch_out" do
 
     it "can touch out" do
       oystercard.top_up(minimum_fare)
-      oystercard.touch_in
+      oystercard.touch_in(station)
       oystercard.touch_out
-      expect(oystercard.travelling).to be(false)
+      expect(oystercard.in_journey?).to be(false)
     end
 
     it "deducts minimum fare" do
       oystercard.top_up(minimum_fare)
-      oystercard.touch_in
+      oystercard.touch_in(station)
       expect{ oystercard.touch_out }.to change{ oystercard.balance }.by(-minimum_fare) 
     end
 
