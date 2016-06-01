@@ -69,8 +69,8 @@ describe Oystercard do
   describe '#journey_history' do
     it 'makes a journey' do
       subject.top_up 2
-      subject.touch_in(other_station)
-      subject.touch_out(station)
+      subject.touch_in(other_station).touch_out(station)
+      #subject.touch_out(station)
       expect(subject.journey_history).to include(other_station => station)
     end
   end
