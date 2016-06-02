@@ -1,18 +1,14 @@
 class Oystercard
 
   MAX_BALANCE = 90
-  MIN_FARE = 1
+  
 
   attr_reader :balance, :entry_station, :exit_station, :journeys
 
   def initialize
     @balance = 0
     @entry_station = nil
-    @journeys = Hash.new
-  end
-
-  def in_journey?
-    !!entry_station
+    @journeys = {}
   end
 
   def touch_in(station)
