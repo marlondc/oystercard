@@ -22,13 +22,21 @@ describe Oystercard do
   end
 
   describe "#touch_in" do
+    let(:station){ double :station}
+    let(:other_station){ double :other_staiton }
 
     context "when card has insufficient balance" do
-      let(:station){ double :station }
       it "raises error if card balance below minimum fare value" do
         expect{ subject.touch_in(station) }.to raise_error "Error: minimum balance less than minimum fare. Top-up!"
       end
     end
+
+    it "deducts PENALTY_FARE when touching in without touching out" do
+      subject.top_up(10)
+      subject.touch_in(:station)
+      expect{subject.touch_in(:other_station)}.to change{subject.balance}.by(-6)
+    end
+
   end
 
   describe "#touch_out" do
@@ -36,8 +44,14 @@ describe Oystercard do
     let(:entry_station){ double :station }
     let(:exit_station){ double :station }
 
-    it "deducts min fare from balance on touch out" do
-      expect{subject.touch_out(exit_station)}.to change{subject.balance}.by(-1)
+    it "deducts PENALTY_FARE fare from balance on touch out if no touch in" do
+      expect{subject.touch_out(exit_station)}.to change{subject.balance}.by(-6)
+    end
+
+    it "deducts MIN_FARE from balance if touched in and now touching out" do
+      subject.top_up(10)
+      subject.touch_in(:station)
+      expect{subject.touch_out(:exit_station)}.to change{subject.balance}.by(-1)
     end
 
     it "forgets entry station" do

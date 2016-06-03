@@ -11,11 +11,12 @@ class Oystercard
     @balance = 0
     @current_journey = journey
     # @entry_station = nil
-    @journeys = {}
+    @journeys = []
   end
 
   def touch_in(station)
     fail "Error: minimum balance less than minimum fare. Top-up!" if @balance < Journey::MIN_FARE
+    deduct(@current_journey.fare) if @current_journey.in_journey?
     @current_journey.start(station)
 
 
@@ -29,6 +30,8 @@ class Oystercard
     # deduct(Journey::MIN_FARE)
     @current_journey.finish(station)
     deduct(@current_journey.fare)
+    @journeys << @current_journey
+    @current_journey = Journey.new
     # @exit_station = station
     # @journeys[@entry_station] = station
     # @entry_station = nil
