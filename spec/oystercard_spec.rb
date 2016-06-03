@@ -6,15 +6,6 @@ describe Oystercard do
     it "starts with balance of 0" do
       expect(subject.balance).to eq(0)
     end
-
-    it "has no entry station set" do
-      expect(subject.entry_station).to eq nil
-    end
-
-    it "has no journey history saved" do
-      expect(subject.journeys).to be_empty
-    end
-
   end
 
   it "responds to top_up with argument" do
@@ -36,7 +27,6 @@ describe Oystercard do
       subject.touch_in(:station)
       expect{subject.touch_in(:other_station)}.to change{subject.balance}.by(-6)
     end
-
   end
 
   describe "#touch_out" do
@@ -53,13 +43,8 @@ describe Oystercard do
       subject.touch_in(:station)
       expect{subject.touch_out(:exit_station)}.to change{subject.balance}.by(-1)
     end
+  end
 
-    it "forgets entry station" do
-      subject.top_up(1)
-      subject.touch_in(entry_station)
-      subject.touch_out(exit_station)
-      expect(subject.entry_station).to eq nil
-    end
 
     # let(:journey){double :entry_station, :exit_station}
 
@@ -70,7 +55,6 @@ describe Oystercard do
     #   expect(subject.journeys).to eq ({entry_station => exit_station})
     # end
 
-  end
 
   describe "#top_up" do
     it "adds to the balance" do
